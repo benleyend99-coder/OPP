@@ -1,89 +1,116 @@
-// ==================== AppOperaciones.java ====================
-/**
- * Clase principal de la aplicación de calculadora
- * Permite al usuario realizar operaciones matemáticas básicas de forma individual
- */
 public class AppOperaciones {
-    private Vista vista;
-    private Operacion[] operaciones;
+    public static void main(String[] args) {
+        Vista vista = new Vista();
+        OperacionesBasicas operaciones = new OperacionesBasicas();
+        boolean salir = false;
 
-    /**
-     * Constructor que inicializa la vista y las operaciones disponibles
-     */
-    public AppOperaciones() {
-        vista = new Vista();
-        // Array con todas las operaciones disponibles
-        operaciones = new Operacion[]{
-            new Suma(),
-            new Resta(),
-            new Multiplicacion(),
-            new Division()
-        };
-    }
+        while (!salir) {
+            int opcionPrincipal = vista.mostrarMenu();
 
-    /**
-     * Método principal que ejecuta el bucle de la aplicación
-     */
-    public void ejecutar() {
-        boolean continuar = true;
+            switch (opcionPrincipal) {
+                case 1: // ----- Operaciones matemáticas -----
+                    vista.mostrarMensaje("\n--- OPERACIONES MATEMÁTICAS ---");
+                    vista.mostrarMensaje("1. Suma");
+                    vista.mostrarMensaje("2. Resta");
+                    vista.mostrarMensaje("3. Multiplicación");
+                    vista.mostrarMensaje("4. División");
+                    vista.mostrarMensaje("5. Factorial");
+                    vista.mostrarMensaje("6. Potenciación");
+                    vista.mostrarMensaje("7. Raíz cuadrada");
+                    int opcionOperacion = vista.leerNumero("Seleccione una opción: ");
 
-        while (continuar) {
-            // Mostrar menú principal con todas las operaciones individuales
-            int opcion = vista.mostrarMenuPrincipal(operaciones);
+                    try {
+                        switch (opcionOperacion) {
+                            case 1: { // Suma
+                                double a = vista.leerNumero("Ingrese el primer número: ");
+                                double b = vista.leerNumero("Ingrese el segundo número: ");
+                                vista.mostrarResultado("Suma", operaciones.sumar(a, b));
+                                break;
+                            }
+                            case 2: { // Resta
+                                double a = vista.leerNumero("Ingrese el primer número: ");
+                                double b = vista.leerNumero("Ingrese el segundo número: ");
+                                vista.mostrarResultado("Resta", operaciones.restar(a, b));
+                                break;
+                            }
+                            case 3: { // Multiplicación
+                                double a = vista.leerNumero("Ingrese el primer número: ");
+                                double b = vista.leerNumero("Ingrese el segundo número: ");
+                                vista.mostrarResultado("Multiplicación", operaciones.multiplicar(a, b));
+                                break;
+                            }
+                            case 4: { // División
+                                double a = vista.leerNumero("Ingrese el dividendo: ");
+                                double b = vista.leerNumero("Ingrese el divisor: ");
+                                vista.mostrarResultado("División", operaciones.dividir(a, b));
+                                break;
+                            }
+                            case 5: { // Factorial
+                                int n = vista.leerNumero("Ingrese un número entero positivo: ");
+                                vista.mostrarResultado("Factorial de " + n, operaciones.factorial(n));
+                                break;
+                            }
+                            case 6: { // Potenciación
+                                double base = vista.leerNumero("Ingrese la base: ");
+                                double exponente = vista.leerNumero("Ingrese el exponente: ");
+                                vista.mostrarResultado("Potenciación", operaciones.potenciar(base, exponente));
+                                break;
+                            }
+                            case 7: { // Raíz cuadrada
+                                double num = vista.leerNumero("Ingrese el número: ");
+                                vista.mostrarResultado("Raíz cuadrada", operaciones.raizCuadrada(num));
+                                break;
+                            }
+                            default:
+                                vista.mostrarError("Opción inválida. Intente nuevamente.");
+                        }
+                    } catch (Exception e) {
+                        vista.mostrarError(e.getMessage());
+                    }
+                    break;
 
-            // Opción 0 para salir
-            if (opcion == 0) {
-                continuar = false;
-                vista.mostrarDespedida();
-            } 
-            // Verificar que la opción esté en el rango de operaciones disponibles
-            else if (opcion >= 1 && opcion <= operaciones.length) {
-                // Realizar la operación seleccionada
-                realizarOperacion(operaciones[opcion - 1]);
-            } 
-            else {
-                vista.mostrarError("Opción inválida. Por favor seleccione una opción válida.");
+                case 2: // ----- Cálculo de áreas -----
+                    int opcionArea = vista.mostrarMenuAreas();
+                    switch (opcionArea) {
+                        case 1: {
+                            double lado = vista.leerNumero("Ingrese el lado del cuadrado: ");
+                            vista.mostrarResultado("Área del cuadrado", lado * lado);
+                            break;
+                        }
+                        case 2: {
+                            double base = vista.leerNumero("Ingrese la base: ");
+                            double altura = vista.leerNumero("Ingrese la altura: ");
+                            vista.mostrarResultado("Área del rectángulo", base * altura);
+                            break;
+                        }
+                        case 3: {
+                            double radio = vista.leerNumero("Ingrese el radio: ");
+                            vista.mostrarResultado("Área de la circunferencia", Math.PI * Math.pow(radio, 2));
+                            break;
+                        }
+                        case 4: {
+                            double base = vista.leerNumero("Ingrese la base: ");
+                            double altura = vista.leerNumero("Ingrese la altura: ");
+                            vista.mostrarResultado("Área del triángulo rectángulo", (base * altura) / 2);
+                            break;
+                        }
+                        default:
+                            vista.mostrarError("Opción no válida en el menú de áreas.");
+                            break;
+                    }
+                    break;
+
+                case 3: // ----- Salir -----
+                    vista.mostrarDespedida();
+                    salir = true;
+                    break;
+
+                default:
+                    vista.mostrarError("Opción no válida. Intente nuevamente.");
+                    break;
             }
         }
 
-        // Cerrar recursos al finalizar
         vista.cerrar();
-    }
-
-    /**
-     * Realiza una operación específica solicitando los números al usuario
-     * @param operacion La operación a realizar
-     */
-    private void realizarOperacion(Operacion operacion) {
-        // Mostrar qué operación se va a realizar
-        vista.mostrarMensaje("\n=== " + operacion.getNombre().toUpperCase() + " ===");
-        
-        // Solicitar los dos números al usuario
-        int num1 = vista.leerNumero("Ingrese el primer numero entero: ");
-        int num2 = vista.leerNumero("Ingrese el segundo numero entero: ");
-
-        // Crear objetos Numero con los valores ingresados
-        Numero n1 = new Numero(num1);
-        Numero n2 = new Numero(num2);
-
-        try {
-            // Realizar el cálculo
-            double resultado = operacion.calcular(n1, n2);
-            vista.mostrarResultado(operacion.getNombre(), n1.getValor(), n2.getValor(), resultado);
-        } catch (ArithmeticException e) {
-            // Manejar errores matemáticos (ej: división por cero)
-            vista.mostrarError(e.getMessage());
-        }
-
-        // Pausar para que el usuario vea el resultado
-        vista.pausar();
-    }
-
-    /**
-     * Método main - punto de entrada de la aplicación
-     */
-    public static void main(String[] args) {
-        AppOperaciones app = new AppOperaciones();
-        app.ejecutar();
     }
 }
